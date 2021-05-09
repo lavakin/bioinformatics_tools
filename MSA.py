@@ -1,6 +1,9 @@
-from Bio import AlignIO
+#!/usr/bin/env python3
+
+from Bio import AlignIO, Align
 import itertools
-from Bio.SubsMat import MatrixInfo
+import math
+import numpy as np
 
 class IdNotFoundException(Exception):
 
@@ -23,20 +26,51 @@ def get_sequence(align, index):
 
 
 def get_column(align, index):
-    return align[:,index]
+    return align[index,:]
 
+def get_conserv_for_seq(sequences,seq_index,matrix):
+    score = 0
+    for i in range(len(sequences)):
+        if i != seq_index:
+            score += cal_pairwise_score(sequences[seq_index],sequences[i],matrix)
+    return score
+                
+def get_N_best(sequences,N,matrix):
+    N = [(0,-math.inf) for i in range(N)]
+    for i in range(len(sequences)):
+        if i%100 == 0:
+            print(i)
+        score = get_sum_of_pairs(get_column(sequences, i), matrix)
+        if score > N[0][1]:
+            N[0] = (i,score)
+            N.sort(key=lambda x:x[1])
+    return N
 
-def get_sum_of_pairs_column(seqences, col, matrix):
-    return get_sum_of_pairs(get_column(seqences, col), matrix)
+def get_sum_of_pairs_column(sequences, col, matrix):
+    return get_sum_of_pairs(get_column(sequences, col), matrix)
 
 
 def get_sum_of_pairs(sequences, matrix):
-    pairs = list(itertools.combinations(sequences, 2))
+    #print(pairs)
     score = 0
-    for pair in pairs:
+    for pair in itertools.combinations(sequences, 2):
         score += cal_pairwise_score(pair[0], pair[1], matrix)
     return score
 
+def get_N_best_for_sequence(sequences,N,seq_index,matrix):
+    N = [(0,-math.inf) for i in range(N)]
+    for i in range(len(sequences)):
+        print(i)
+        col = get_column(sequences,i)
+        score = 0
+        for j in range(len(col)):
+            if j != seq_index:
+                score += cal_pairwise_score(col[j],col[seq_index],matrix)
+        if score > N[0][1]:
+            N[0] = (i,score)
+            N.sort(key=lambda x:x[1])
+    return N
+    
     
 # function obtained from https://github.com/PrernaDas/Sum-Of-Pairs-Score-Blosum62.git
 def cal_pairwise_score(seq1, seq2, matrix):
@@ -55,7 +89,13 @@ def cal_pairwise_score(seq1, seq2, matrix):
             else:
                 score += blosum[pair] # score = score + blosum[pair]
     return score # gives the cumulative score for all the pairs evaluated in range of len(seq1), i.e i takes values from 0 uptil len(seq1)
+
+    
     
 align = AlignIO.read("clust", "clustal")
-blosum = MatrixInfo.blosum62
-print(get_sum_of_pairs_column(align, 100, blosum))
+align = np.transpose(align)
+#print(align.get_alignment_length())
+blosum = Align.substitution_matrices.load('BLOSUM62')
+#print(blosum)
+
+print(get_conserv_for_seq(align,20, blosum))
