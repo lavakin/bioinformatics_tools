@@ -13,7 +13,7 @@ The package implements two distance measures.
 
 ### Editing distance
 The function returns the distance along with all best scoring alignments
-```
+```python
 >>> from bioinf.distance import *
 >>> editing_distance('parek','uprk')
 [['parek', 'upr-k', '3'], ['-parek', 'up-r-k', '3']]
