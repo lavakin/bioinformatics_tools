@@ -33,3 +33,32 @@ Traceback (most recent call last):
     raise SequencesNotTheSameLength()
 bioinf.distance.SequencesNotTheSameLength: Sequences does not have the same length
 ```
+## Processing fasta files
+Import file:
+```python
+>>> from bioinf.fasta import *
+>>> fasta = Fasta('./bioinf/fasta_files/1R8Y.fasta')
+```
+Get ids:
+```python
+>>> fasta.get_ids()
+['pdb|1R8Y|H', 'P01013']
+```
+Get sequence by id or index:
+```python
+>>> seq = fasta.get_sequence('P01013')
+>>> seq = fasta.sequences[1]
+```
+Working with sequences:
+```python
+>>> len(seq)
+232
+>>> seq[1:10]
+'IKDLLVSSS'
+>>> seq.description
+'GENE X PROTEIN (OVALBUMIN-RELATED)'
+>>> seq.id
+'P01013'
+```
+
+
