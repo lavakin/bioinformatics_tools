@@ -21,7 +21,7 @@ class MSA:
         """
         :param file_name: name of the clustal file
         """
-        self.alignments = np.transpose(AlignIO.read(file_name, "clustal"))
+        self.alignments = AlignIO.read(file_name, "clustal")
 
 
     def get_sequence(self, index):
@@ -30,19 +30,16 @@ class MSA:
         :return: sequence
         """
         if type(index) is int:
-            return self.alignments[:, index]
+            return self.alignments[index]
         elif type(index) is str:
             first = next(filter(lambda x: x.id == index, self.alignments), None)
-            if first == None:
-                raise IdNotFoundException()
-            else:
-                return first
+            return first    
         else:
             raise FormatError()
 
 
     def get_column(self, index):
-        return self.alignments[index]
+        return self.alignments[:,index]
 
 
     def get_conserv_for_seq(self, seq_index, matrix):
@@ -52,10 +49,9 @@ class MSA:
         :return: conservation score for a sequence based on SoP score
         """
         score = 0
-        for i in range(len(self.alignments[0])):
+        for i in range(len(self.alignments)):
             if i != seq_index:
-                score += MSA.cal_pairwise_score(self.alignments[:, seq_index], self.alignments[:, i], matrix)
-        print(self.alignments[:, seq_index])
+                score += MSA.cal_pairwise_score(self.alignments[seq_index], self.alignments[i], matrix)
         return score
 
 
@@ -66,15 +62,22 @@ class MSA:
         :return: N column indexes with highest SoP score together with the respective score
         """
         N = [(0, -math.inf) for i in range(N)]
-        for i in range(len(self.alignments)):
+        for i in range(1,len(self.alignments[0])):
             if i % 100 == 0:
                 print(i)
-            score = MSA.get_sum_of_pairs(self.get_column(i), matrix)
+            score = MSA.get_sum_of_pairs_c(self.get_column(i), matrix)
             if score > N[0][1]:
                 N[0] = (i, score)
                 N.sort(key=lambda x: x[1])
         return N
 
+    
+    def get_sum_of_pairs(self, matrix):
+        score = 0
+        for i in range(len(self.alignments[0])):
+            score += MSA.get_sum_of_pairs_c(self.get_column(i), matrix)
+        return score
+    
 
     def get_sum_of_pairs_column(self, col, matrix):
         """
@@ -82,10 +85,10 @@ class MSA:
         :param matrix: scoring matrix
         :return: sum of pairs score for a selected column
         """
-        return MSA.get_sum_of_pairs(self.get_column(col), matrix)
+        return MSA.get_sum_of_pairs_c(self.get_column(col), matrix)
 
 
-    def get_sum_of_pairs(column, matrix):
+    def get_sum_of_pairs_c(column, matrix):
         """
         :param matrix: scoring matrix
         oaram column: an array of values from a specific column
@@ -105,7 +108,8 @@ class MSA:
         :return: N columns with highest SoP score
         """
         N = [(0, -math.inf) for i in range(N)]
-        for i in range(len(self.alignments)):
+
+        for i in range(len(self.alignments[0])):
             col = self.get_column(i)
             score = 0
             for j in range(len(col)):
@@ -134,6 +138,5 @@ class MSA:
                 else:
                     score += matrix[pair]  # score = score + blosum[pair]
         return score  # gives the cumulative score for all the pairs evaluated in range of len(seq1), i.e i takes values from 0 uptil len(seq1)
-
 
 

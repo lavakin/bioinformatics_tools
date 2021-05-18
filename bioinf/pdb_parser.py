@@ -2,11 +2,8 @@
 
 import matplotlib.pyplot as plt
 import sys
-from pathlib import Path
-import shutil
 from Bio.PDB import *
 from scipy.spatial.distance import *
-import argparse
 import itertools
 import numpy as np
 from collections import Counter
@@ -15,45 +12,37 @@ polar_amks = ['ARG', 'ASN', 'ASP', 'CYS', 'GLU', 'GLN', 'HIS', 'LYS', 'SER', 'TH
 
 
 class PDB:
-    def __init__(self, file_name, from_file=True):
+    def __init__(self, file_name):
         """
         :param file_name: name of the pdb file or pdb if it should be downloaded
         :param from_file: from file stored on the machine or should be downloaded
         """
-        self.structure = PDB.get_structure(file_name, from_file)
+        self.structure = PDB.get_structure(file_name)
+
 
     def get_info(self):
         """
         :return: information about the pdb
         """
-        print("number of models:", len(self))
         chains = 0
         residues = 0
         atoms = 0
-        for model in self:
+        for model in self.structure:
             chains += len(model)
             for chain in model:
                 residues += len(chain)
                 for residue in chain:
                     atoms += len(residue)
-        return {"number of chains": chains, "number of residues" : residues, "number of atoms": atoms}
+        return {"number of models:": len(self.structure),"number of chains": chains, "number of residues" : residues, "number of atoms": atoms}
 
-
-    def get_structure(file_name, from_file=True):
+    
+    def get_structure(file_name):
         """
         :param from_file: from file stored on the machine or should be downloaded
         :return: parsed structure from pdb
         """
         parser = PDBParser()
-        if from_file:
-            return parser.get_structure(file_name, file_name)
-        if not from_file:
-            comp_file_name = file_name + ".pdb"
-            pdbl = PDBList()
-            pdbl.retrieve_pdb_file(file_name)
-            shutil.copy(comp_file_name, 'pdbs')
-            Path(comp_file_name).unlink(missing_ok=True)
-        return parser.get_structure(file_name, "pdbs/" + file_name)
+        return parser.get_structure(file_name, file_name)
 
 
     def get_diameter(self):
@@ -111,7 +100,7 @@ class PDB:
             list(i[0].resname for i in HSExposure.ExposureCN(self.structure[0], radius=10, offset=0) if i[1] >= 20))
         exposed = Counter(
             list(i[0].resname for i in HSExposure.ExposureCN(self.structure[0], radius=10, offset=0) if i[1] < 20))
-        return buried, exposed
+        return {"buried":buried, "exposed":exposed}
 
 
     def get_histogram(self):
@@ -128,7 +117,8 @@ class PDB:
         """
         :return: dict of aminoacids with their respective ratios of buried and exposed CAs
         """
-        buried, exposed = self.get_buried_exposed_by_amk()
+        dic = self.get_buried_exposed_by_amk()
+        buried, exposed = dic["buried"],dic["exposed"]
         amas = dict.fromkeys(set(exposed.keys()).union(set(buried.keys())), 0)
         for ama in amas.copy():
             if ama in buried.keys() and ama in exposed.keys():
@@ -145,10 +135,9 @@ class PDB:
             amk_pol = sum(num for amk, num in amk_type.items() if amk in polar_amks)
             return amk_pol / sum(num for num in amk_type.values())
 
-        buried, exposed = self.get_buried_exposed_by_amk()
+        dic = self.get_buried_exposed_by_amk()
+        buried, exposed = dic["buried"],dic["exposed"]
         buried_pol_ratio = get_ratio(buried)
         exposed_pol_ratio = get_ratio(exposed)
         return {"buried ratio": buried_pol_ratio, "exposed ratio": exposed_pol_ratio}
-
-
 
