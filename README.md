@@ -12,9 +12,24 @@ After you are done, just type `deactivate` to terminate the virtual environment
 The package implements two distance measures. 
 
 ### Editing distance
-The function returns the distance along with all best scoring alignments
+The editing distance function returns the distance along with all best scoring alignments
 ```python
 >>> from bioinf.distance import *
 >>> editing_distance('parek','uprk')
 [['parek', 'upr-k', '3'], ['-parek', 'up-r-k', '3']]
+```
+### Hamming distance
+```python
+>>> from bioinf.distance import *
+>>> hamming_distance('brok','brak')
+1
+```
+The hamming distance is not defined for sequence with different lengths. Thus an error occurs in such case.
+```python
+>>> hamming_distance('brok','braky')
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File ".../bioinf/distance.py", line 40, in hamming_distance
+    raise SequencesNotTheSameLength()
+bioinf.distance.SequencesNotTheSameLength: Sequences does not have the same length
 ```
