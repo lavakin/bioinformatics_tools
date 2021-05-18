@@ -60,5 +60,31 @@ Working with sequences:
 >>> seq.id
 'P01013'
 ```
+## Processing multiple sequence alignment
+Parse MSA
+```python
+>>> from bioinf.MSA import *
+>>> msa = MSA('bioinf/clust')
+```
+Get sequence and column:
+```python
+>>> msa.get_sequence('UniRef90_UPI000')
+SeqRecord(seq=Seq('--------------------------------------------------MEPM...DSE'), id='UniRef90_UPI000', name='<unknown name>', description='UniRef90_UPI000', dbxrefs=[])
+>>> msa.get_sequence(2)
+SeqRecord(seq=Seq('--------------------------------------------------MEPM...DSE'), id='UniRef90_UPI000', name='<unknown name>', description='UniRef90_UPI000',dbxrefs=[])
+>>> msa.get_column(50)
+'MMMMMMMMMMMMMMMMMMM-MMMMMMMMMMMMMMMMMMMMMMMMMMM-MMMMMMM'
+```
+Sum of Pairs:
+```python
+>>> msa.get_sum_of_pairs(blosum)
+1806364.0
+>>> msa.get_sum_of_pairs_column(74,blosum)
+15741.0
+```
+
+
+
+
 
 
