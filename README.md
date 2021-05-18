@@ -3,7 +3,11 @@
 2. move to the repository `cd bioinformatics_tools`
 3. set up a virtual environment `python3 -m venv bioinf`
 4. activate the environment `. bioinf/bin/activate`
-5. build and install package `./setup.py build && ./setup.py install`
+5. build and install package 
+```bash
+chmod +x setup.py
+./setup.py build && ./setup.py install
+```
 
 After you are done, just type `deactivate` to terminate the virtual environment
 
