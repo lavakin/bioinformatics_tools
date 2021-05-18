@@ -118,4 +118,17 @@ Get substructures:
 >>> pdb.structure[0]["A"][100]["CA"]
 <Atom CA>
 ```
-
+Get information about the structure:
+```python
+>>> pdb.get_info()
+{'number of models:': 1, 'number of chains': 1, 'number of residues': 346, 'number of atoms': 1289}
+>>> pdb.get_diameter()
+52.42697045264779
+```
+Get nearest neighbors:
+```python
+>>> pdb.get_nearest_residues(pdb.structure[0]['A'][111]['CA'],3)
+[<Residue VAL het=  resseq=112 icode= >, <Residue PHE het=  resseq=110 icode= >, <Residue LYS het=  resseq=111 icode= >]
+>>> pdb.get_nearest_atoms(pdb.structure[0]['A'][111]['CA'],2)
+[<Atom C>, <Atom N>, <Atom CA>, <Atom CB>]
+```
