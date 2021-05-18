@@ -1,4 +1,4 @@
-# Initialisation
+# Initialization
 1. Clone this repository: `git clone git@github.com:lavakin/bioinformatics_tools.git`
 2. move to the repository `cd bioinformatics_tools`
 3. set up a virtual environment `python3 -m venv bioinf`
@@ -132,3 +132,36 @@ Get nearest neighbors:
 >>> pdb.get_nearest_atoms(pdb.structure[0]['A'][111]['CA'],2)
 [<Atom C>, <Atom N>, <Atom CA>, <Atom CB>]
 ```
+## Computing structure-related properties
+Ratio of surface and buried amino acids
+```python
+>>> pdb.get_buried_ratio()
+{'buried_ratio': 0.241, 'exposed_ratio': 0.759}
+>>> pdb.get_buried_exposed_by_amk()
+{'buried': Counter({'ALA': 6, 'LEU': 5, 'PHE': 4, 'TRP': 3, 'MET': 3, 'LYS': 2, 'VAL': 2, 'GLY': 2, 'ASN': 1, 'SER': 1, 'PRO': 1, 'CYS': 1, 'GLU': 1, 'THR': 1, 'ILE': 1}), 'exposed': Counter({'ALA': 22, 'GLY': 14, 'SER': 9, 'LYS': 
+>>> pdb.get_buried_exposed_ratio_by_amk()
+{'LYS': 0.182, 'ARG': 0, 'ILE': 0.5, 'VAL': 0.286, 'THR': 0.2, 'HIS': 0, 'TRP': 0.75, 'ASP': 0, 'GLU': 0.2, 'MET': 0.5, 'PRO': 0.333, 'SER': 0.1, 'PHE': 0.4, 'ASN': 0.167, 'ALA': 0.214, 'TYR': 0, 'CYS': 1, 'LEU': 0.556, 'GLY': 0.125, 'GLN': 0}
+9, 'ASP': 8, 'PHE': 6, 'GLN': 5, 'VAL': 5, 'ASN': 5, 'LEU': 4, 'THR': 4, 'GLU': 4, 'MET': 3, 'HIS': 2, 'PRO': 2, 'ARG': 2, 'TRP': 1, 'ILE': 1, 'TYR': 1})}
+```
+Get histogram:
+```python
+>>> import matplotlib.pyplot as plt
+>>> plt = pdb.get_histogram()
+>>> plt.show()
+```
+Get ratio of polar aminoacids in exposed and buried:
+```python
+>>> pdb.get_polarity()
+{'buried ratio': 0.20588235294117646, 'exposed ratio': 0.45794392523364486}
+```
+ ## A2a and caffeine receptor and hemoglobin (1b0b) differences
+ The caffeine receptor has 35% of its aminoacids buried. From the buried aminoacids, 32% are polar and from the exposed 41% are polar. The number of atoms is 2410.
+ 
+ The hemoglobin has 24% of its aminoacids buried. From the buried aminoacids, 21% are polar and from the exposed 46% are polar. The number of atoms is 1289.
+ 
+ The hemoglobin molecule is thus smaller and less compact, whereas the caffeine receptor is larger and more compact. This is why caffeine rceptor has larger ratio of buried aminoacids. This is also why polar aminoacids are more often buried by caffeine receptor then by hemoglobin.
+ 
+
+
+
+
