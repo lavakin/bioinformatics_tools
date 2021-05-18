@@ -77,14 +77,33 @@ SeqRecord(seq=Seq('--------------------------------------------------MEPM...DSE'
 ```
 Sum of Pairs:
 ```python
+>>> blosum = Align.substitution_matrices.load('BLOSUM62')
 >>> msa.get_sum_of_pairs(blosum)
 1806364.0
 >>> msa.get_sum_of_pairs_column(74,blosum)
 15741.0
 ```
+Scoring matrix as an argument.
 
+## Conservation determination from multiple aligned sequences
 
-
+Get conservation score:
+```python
+>>> msa.get_conserv_for_seq(50, blosum)
+68118.0
+```
+Get N best positions along with the respective scores:
+```python
+>>> msa.get_N_best_for_sequence(10,5,blosum)
+[(283, 432.0), (261, 432.0), (224, 475.0), (370, 486.0), (368, 486.0), (332, 486.0), (328, 486.0), (259, 486.0), (218, 486.0), (74, 583.0)]
+>>> msa.get_N_best(10,blosum)
+[(283, 11880.0), (261, 11880.0), (224, 12771.0), (370, 13365.0), (368, 13365.0), (332, 13365.0), (328, 13365.0), (259, 13365.0), (218, 13365.0), (74, 15741.0)]
+```
+Get conservation score for a sequence
+```python
+>>> msa.get_conserv_for_seq(50,blosum)
+68118.0
+```
 
 
 
