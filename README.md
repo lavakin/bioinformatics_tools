@@ -104,6 +104,18 @@ Get conservation score for a sequence
 >>> msa.get_conserv_for_seq(50,blosum)
 68118.0
 ```
-
-
+## Processing PDB files
+Get substructures:
+```python
+>>> from bioinf.pdb_parser import *
+>>> pdb = PDB('./pdbs/1b0b.pdb')
+>>> pdb.structure[0]
+<Model id=0>
+>>> pdb.structure[0]["A"]
+<Chain id=A>
+>>> pdb.structure[0]["A"][100]
+<Residue GLY het=  resseq=100 icode= >
+>>> pdb.structure[0]["A"][100]["CA"]
+<Atom CA>
+```
 
